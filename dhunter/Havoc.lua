@@ -6,11 +6,11 @@ local OvaleSpellBook = T.OvaleSpellBook;
 local D = T.jcc;
 
 local _, clzz = UnitClass("player");
-if clzz ~= "DAEMONHUNTER" then return; end
+if clzz ~= "DEMONHUNTER" then return; end
 
 D.lastKuangbaoZitai = 0;
-local W = T.jcc.DAEMONHUNTER;
-local A = W:NewModule("DAEMONHUNTER1", "AceEvent-3.0", "AceHook-3.0", "CCTalent-1.0");
+local W = T.jcc.DEMONHUNTER;
+local A = W:NewModule("DEMONHUNTER1", "AceEvent-3.0", "AceHook-3.0", "CCTalent-1.0");
 
 function A:PLAYER_REGEN_ENABLED()
 end

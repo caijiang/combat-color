@@ -38,5 +38,7 @@
 <Script file="monk\CCMONK.lua"/>
 <Script file="monk\CCMONKWindwalker.lua"/>
 <Script file="monk\Brewmaster.lua"/>
+<Script file="dhunter\DaemonHunter.lua"/>
+<Script file="dhunter\Havoc.lua"/>
 
 </Ui>

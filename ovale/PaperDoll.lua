@@ -57,6 +57,7 @@ local self_playerGUID = nil
 
 local OVALE_SPELLDAMAGE_SCHOOL = {
 	DEATHKNIGHT = 4, -- Nature
+	DEMONHUNTER = 3, -- Fire
 	DRUID = 4, -- Nature
 	HUNTER = 4, -- Nature
 	MAGE = 5, -- Frost
@@ -77,13 +78,14 @@ local OVALE_HEALING_CLASS = {
 }
 local OVALE_SPECIALIZATION_NAME = {
 	DEATHKNIGHT = { "blood", "frost", "unholy" },
+	DEMONHUNTER = { "havoc", "vengeance" },
 	DRUID = { "balance", "feral", "guardian", "restoration" },
 	HUNTER = { "beast_mastery", "marksmanship", "survival" },
 	MAGE = { "arcane", "fire", "frost" },
 	MONK = { "brewmaster", "mistweaver", "windwalker" },
 	PALADIN = { "holy", "protection", "retribution" },
 	PRIEST = { "discipline", "holy", "shadow" },
-	ROGUE = { "assassination", "combat", "subtlety" },
+	ROGUE = { "assassination", "outlaw", "subtlety" },
 	SHAMAN = { "elemental", "enhancement", "restoration" },
 	WARLOCK = { "affliction", "demonology", "destruction" },
 	WARRIOR = { "arms", "fury", "protection" },
@@ -99,9 +101,9 @@ OvalePaperDoll.level = API_UnitLevel("player")
 OvalePaperDoll.specialization = nil
 -- Names of paper doll stats.
 OvalePaperDoll.STAT_NAME = {
--- Most recent snapshot time.
+	-- Most recent snapshot time.
 	snapshotTime = true,
--- Primary stats.
+	-- Primary stats.
 	agility = true,
 	intellect = true,
 	spirit = true,
@@ -111,28 +113,28 @@ OvalePaperDoll.STAT_NAME = {
 	rangedAttackPower = true,
 	spellBonusDamage = true,
 	spellBonusHealing = true,
--- Percent increase of effect due to mastery.
+	-- Percent increase of effect due to mastery.
 	masteryEffect = true,
--- Percent increase to melee critical strike and haste.
+	-- Percent increase to melee critical strike and haste.
 	meleeCrit = true,
 	meleeHaste = true,
--- Percent increase to ranged critical strike and haste.
+	-- Percent increase to ranged critical strike and haste.
 	rangedCrit = true,
 	rangedHaste = true,
--- Percent increase to spell critical strike and haste.
+	-- Percent increase to spell critical strike and haste.
 	spellCrit = true,
 	spellHaste = true,
--- Percent chance to multistrike.
+	-- Percent chance to multistrike.
 	multistrike = true,
--- Combat ratings.
+	-- Combat ratings.
 	critRating = true,
 	hasteRating = true,
 	masteryRating = true,
 	multistrikeRating = true,
--- Normalized weapon damage of mainhand and offhand weapons.
+	-- Normalized weapon damage of mainhand and offhand weapons.
 	mainHandWeaponDamage = true,
 	offHandWeaponDamage = true,
--- Damage multiplier.
+	-- Damage multiplier.
 	baseDamageMultiplier = true,
 }
 -- SNAPSHOT_STAT_NAME[statName] = true if statName may be snapshot into an aura or channeled spell.

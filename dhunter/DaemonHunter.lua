@@ -15,10 +15,10 @@ local OvalePower = T.OvalePower;
 --恶魔猎手, DAEMONHUNTER 12
 --Havoc Vengeance
 local _, clzz = UnitClass("player");
-if clzz ~= "DAEMONHUNTER" then return; end
+if clzz ~= "DEMONHUNTER" then return; end
 
-local K = D:NewModule("DAEMONHUNTER", "AceEvent-3.0", "AceHook-3.0", "CCClass-1.0");
-D.DAEMONHUNTER = K;
+local K = D:NewModule("DEMONHUNTER", "AceEvent-3.0", "AceHook-3.0", "CCClass-1.0");
+D.DEMONHUNTER = K;
 
 K.breakingSpell = "吞噬魔法";
 K.testGCDSpell = "恶魔之咬";

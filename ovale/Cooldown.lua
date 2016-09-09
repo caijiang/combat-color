@@ -29,30 +29,30 @@ local API_GetTime = GetTime
 
 -- Spell ID for the dummy Global Cooldown spell.
 local GLOBAL_COOLDOWN = 61304
+-- This should be more than OvaleFuture's SIMULATOR_LAG.
+local COOLDOWN_THRESHOLD = 0.15
 
 -- Register for debugging messages.
 OvaleDebug:RegisterDebugging(OvaleCooldown)
 -- Register for profiling.
 OvaleProfiler:RegisterProfiling(OvaleCooldown)
 
--- BASE_GCD[class] = { gcd, isCaster }
+-- BASE_GCD[class] = { gcd, haste }
 local BASE_GCD = {
-	["DEATHKNIGHT"]	= { 1.0, false },
-	["DRUID"]		= { 1.5,  true },
-	["HUNTER"]		= { 1.0, false },
-	["MAGE"]		= { 1.5,  true },
-	["MONK"]		= { 1.5, false },
-	["PALADIN"]		= { 1.5, false },
-	["PRIEST"]		= { 1.5,  true },
-	["ROGUE"]		= { 1.0, false },
-	["SHAMAN"]		= { 1.5,  true },
-	["WARLOCK"]		= { 1.5,  true },
-	["WARRIOR"]		= { 1.5, false },
+	["DEATHKNIGHT"]	= { 1.5, "melee"  },
+	["DEMONHUNTER"]	= { 1.5, "melee"  },
+	["DRUID"]		= { 1.5, "spell"  },
+	["HUNTER"]		= { 1.5, "ranged" },
+	["MAGE"]		= { 1.5, "spell"  },
+	["MONK"]		= { 1.0, false    },
+	["PALADIN"]		= { 1.5, "spell"  },
+	["PRIEST"]		= { 1.5, "spell"  },
+	["ROGUE"]		= { 1.0, false    },
+	["SHAMAN"]		= { 1.5, "spell"  },
+	["WARLOCK"]		= { 1.5, "spell"  },
+	["WARRIOR"]		= { 1.5, "melee"  },
 }
 
--- Spells that cause haste to affect the global cooldown.
-local FOCUS_AND_HARMONY = 154555
-local HEADLONG_RUSH = 158836
 --</private-static-properties>
 
 --<public-static-properties>
@@ -66,6 +66,7 @@ OvaleCooldown.gcd = {
 	start = 0,
 	duration = 0,
 }
+
 --</public-static-properties>
 
 --<public-static-methods>
@@ -94,11 +95,13 @@ function OvaleCooldown:OnEnable()
 	self:RegisterEvent("UPDATE_SHAPESHIFT_COOLDOWN", "Update")
 	OvaleFuture:RegisterSpellcastInfo(self)
 	OvaleState:RegisterState(self, self.statePrototype)
+	OvaleData:RegisterRequirement("oncooldown", "RequireCooldownHandler", self)
 end
 
 function OvaleCooldown:OnDisable()
 	OvaleState:UnregisterState(self)
 	OvaleFuture:UnregisterSpellcastInfo(self)
+	OvaleData:UnregisterRequirement("oncooldown")
 	self:UnregisterEvent("ACTIONBAR_UPDATE_COOLDOWN")
 	self:UnregisterEvent("BAG_UPDATE_COOLDOWN")
 	self:UnregisterEvent("PET_BAR_UPDATE_COOLDOWN")
@@ -206,35 +209,22 @@ function OvaleCooldown:GetSpellCooldown(spellId)
 			cdStart, cdDuration, cdEnable = start, duration, enable
 		end
 	end
-	return cdStart, cdDuration, cdEnable
+
+	-- The game allows you to cast a spell a small time before it is really available, to compensate for lag.
+	-- The COOLDOWN_THRESHOLD is used to take this in account
+	return cdStart - COOLDOWN_THRESHOLD, cdDuration, cdEnable
 end
 
 -- Return the base GCD and caster status.
 function OvaleCooldown:GetBaseGCD()
-	local gcd, isCaster
+	local gcd, haste
 	local baseGCD = BASE_GCD[Ovale.playerClass]
 	if baseGCD then
-		gcd, isCaster = baseGCD[1], baseGCD[2]
+		gcd, haste = baseGCD[1], baseGCD[2]
 	else
-		gcd, isCaster = 1.5, true
+		gcd, haste = 1.5, "spell"
 	end
-	if Ovale.playerClass == "DRUID" then
-		if OvaleStance:IsStance("druid_cat_form") then
-			gcd = 1.0
-			isCaster = false
-		elseif OvaleStance:IsStance("druid_bear_form") then
-			isCaster = false
-		end
-	elseif Ovale.playerClass == "MONK" then
-		if OvaleStance:IsStance("monk_stance_of_the_fierce_tiger") then
-			gcd = 1.0
-		elseif OvaleStance:IsStance("monk_stance_of_the_sturdy_ox") then
-			gcd = 1.0
-		else
-			isCaster = true
-		end
-	end
-	return gcd, isCaster
+	return gcd, haste
 end
 
 -- Copy cooldown information from the spellcast to the destination table.
@@ -254,6 +244,24 @@ function OvaleCooldown:SaveSpellcastInfo(spellcast, atTime, state)
 			spellcast.offgcd = true
 		end
 	end
+end
+
+function OvaleCooldown:RequireCooldownHandler(spellId, atTime, requirement, tokens, index, targetGUID)
+	local cdSpellId = tokens
+	local verified = false
+	if index then
+		cdSpellId = tokens[index]
+		index = index + 1
+	end
+	if cdSpellId then
+		local cd = self:GetCD(cdSpellId)
+		verified = cd.duration > 0
+		local result = verified and "passed" or "FAILED"
+		self:Log("    Require spell %s with cooldown at time=%f: %s (duration = %f)", cdSpellId, atTime, result, duration)
+	else
+		Ovale:OneTimeMessage("Warning: requirement '%s' is missing a spell argument.", requirement)
+	end
+	return verified, requirement, index
 end
 --</public-static-methods>
 
@@ -368,12 +376,27 @@ statePrototype.GetGCD = function(state, spellId, atTime, targetGUID)
 
 	local gcd = spellId and state:GetSpellInfoProperty(spellId, atTime, "gcd", targetGUID)
 	if not gcd then
-		local isCaster, haste
-		gcd, isCaster = OvaleCooldown:GetBaseGCD()
-		if Ovale.playerClass == "MONK" and OvaleSpellBook:IsKnownSpell(FOCUS_AND_HARMONY) then
-			haste = "melee"
-		elseif Ovale.playerClass == "WARRIOR" and OvaleSpellBook:IsKnownSpell(HEADLONG_RUSH) then
-			haste = "melee"
+		local haste
+		gcd, haste = OvaleCooldown:GetBaseGCD()
+
+		if Ovale.playerClass == "MONK" and OvalePaperDoll:IsSpecialization("mistweaver") then
+			-- Mistweaver Monk = 1.5, spell
+			gcd = 1.5
+			haste = "spell"
+		elseif Ovale.playerClass == "DRUID" then
+			if OvaleStance:IsStance("druid_cat_form") then
+				-- Cat Form Druid = 1.0, false
+				gcd = 1.0
+				haste = false
+			end
+			-- Adrenaline Rush buffed Outlaw Rogue = 0.8, false (TODO)
+
+			-- Possible Additional Exceptions.
+			-- Shouldn't be any differene between using melee haste or spell haste so didn't bother changing these.
+			-- Bear Form Druid = 1.5, melee
+			-- Retribution Paladin = 1.5, melee
+			-- Protection Paladin = 1.5, melee
+			-- Enhancement Shaman = 1.5, melee
 		end
 		local gcdHaste = spellId and state:GetSpellInfoProperty(spellId, atTime, "gcd_haste", targetGUID)
 		if gcdHaste then
@@ -384,13 +407,10 @@ statePrototype.GetGCD = function(state, spellId, atTime, targetGUID)
 				haste = siHaste
 			end
 		end
-		if not haste and isCaster then
-			haste = "spell"
-		end
 		local multiplier = state:GetHasteMultiplier(haste)
 		gcd = gcd / multiplier
-		-- Clamp GCD at 1s.
-		gcd = (gcd > 1) and gcd or 1
+		-- Clamp GCD at 750ms.
+		gcd = (gcd > 0.750) and gcd or 0.750
 	end
 	return gcd
 end
@@ -415,7 +435,7 @@ statePrototype.GetCD = function(state, spellId)
 			start, duration = OvaleCooldown:GetSpellCooldown(si.forcecd)
 		end
 		cd.serial = OvaleCooldown.serial
-		cd.start = start
+		cd.start = start - COOLDOWN_THRESHOLD
 		cd.duration = duration
 		cd.enable = enable
 
@@ -519,4 +539,6 @@ statePrototype.ResetSpellCooldown = function(state, spellId, atTime)
 		end
 	end
 end
+
+statePrototype.RequireCooldownHandler = OvaleCooldown.RequireCooldownHandler
 --</state-methods>
