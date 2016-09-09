@@ -1,0 +1,42 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+<Script file="warrior\CCWARRIOR.lua"/>
+<Script file="warrior\CCWARRIORArmor.lua"/>
+<Script file="warrior\CCWARRIORTG.lua"/>
+<Script file="warrior\CCWARRIORTank.lua"/>
+<Script file="paladin\CCPALADIN.lua"/>
+<Script file="paladin\CCPALADINTank.lua"/>
+<Script file="paladin\CCPALADINHoly.lua"/>
+<Script file="paladin\CCPALADINRetribution.lua"/>
+<Script file="dk\CCDK.lua"/>
+<Script file="dk\CCDKBlood.lua"/>
+<Script file="dk\CDKFrost.lua"/>
+<Script file="dk\Unholy.lua"/>
+<Script file="hunter\CCHunter.lua"/>
+<Script file="hunter\CCHunterBMNew.lua"/>
+<Script file="hunter\CCHunterMMNew.lua"/>
+<Script file="hunter\CCHunterSV.lua"/>
+<Script file="mg\CCMg.lua"/>
+<Script file="mg\CCMgFireNew.lua"/>
+<Script file="mg\CCMgArcane.lua"/>
+<Script file="shaman\CCSHAMAN.lua"/>
+<Script file="shaman\CCSHAMANRest.lua"/>
+<Script file="shaman\CCSHAMANEnhance.lua"/>
+<Script file="shaman\Element.lua"/>
+<Script file="druid\CCDRUID.lua"/>
+<Script file="druid\CCDRUIDFeral.lua"/>
+<Script file="rogue\CCRogue.lua"/>
+<Script file="rogue\CCRogueCombat.lua"/>
+<Script file="rogue\Assassination.lua"/>
+<Script file="rogue\Subtlety.lua"/>
+<Script file="priest\CCPRIEST.lua"/>
+<Script file="priest\CCPRIESTDiscipline.lua"/>
+<Script file="priest\CCPRIESTShadow.lua"/>
+<Script file="warlock\CCWARLOCK.lua"/>
+<Script file="warlock\CCWARLOCKDestruction.lua"/>
+<Script file="monk\CCMONK.lua"/>
+<Script file="monk\CCMONKWindwalker.lua"/>
+<Script file="monk\Brewmaster.lua"/>
+
+</Ui>

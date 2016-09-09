@@ -1,0 +1,71 @@
+## Interface: 70000
+## Title: Combat Color
+## Author: luffy.ja@gmail.com
+## OptionalDeps: Ace3, LibBabble-CreatureType-3.0, LibDataBroker-1.1, LibDBIcon-1.0, LibDualSpec-1.0, LibRangeCheck-2.0, LibTextDump-1.0, Masque, Recount, Skada, SpellFlashCore
+
+# ## Dependencies: AttackTimer
+LibRangeCheck-2.0\LibRangeCheck-2.0.lua
+
+ovale/Init.lua
+
+ovale/Localization.lua
+ovale/Options.lua
+
+# Debugging and profiling modules.
+ovale/Debug.lua
+ovale/Profiler.lua
+
+# Utility modules.
+ovale/Pool.lua
+ovale/PoolGC.lua
+ovale/Queue.lua
+
+# Core modules.
+ovale/Aura.lua
+ovale/Cooldown.lua
+ovale/Data.lua
+ovale/Equipment.lua
+ovale/Future.lua
+ovale/GUID.lua
+ovale/Health.lua
+# Lexer.lua
+ovale/PaperDoll.lua
+ovale/Power.lua
+# Runes.lua
+ovale/Score.lua
+# Scripts.lua
+# SimulationCraft.lua
+ovale/SpellBook.lua
+# SpellFlash.lua
+ovale/Stance.lua
+ovale/State.lua
+
+# Core modules with dependencies.
+
+# Additional modules.
+ovale/Enemies.lua
+ovale/Totem.lua
+
+
+CombatColor_Utils.lua
+CombatColor_Commons.lua
+
+OvaleHelper.lua
+
+CombatColorBingdings.lua
+threats.lua
+CombatColor.lua
+CombatColor.xml
+CCShareHoly.lua
+CCPVP.lua
+CCAuras.lua
+CCRaid.lua
+CCLibClass.lua
+CCLibTalent.lua
+#TestCCLibClass.lua
+
+classes.xml
+
+CCTest.lua
+CCTrades.lua
+cmd.lua

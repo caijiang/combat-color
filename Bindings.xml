@@ -1,0 +1,69 @@
+﻿<Bindings>
+<!--
+	CC_WA_TooglePojia()
+	WA_ToogleCCPull()
+	-->
+  <Binding name="JCCCH" header="JCOMBATCOLOR" >
+		WA_ToogleCC_WA_CH()
+  </Binding>
+  <Binding name="JCCRUSH" >
+		WA_ToogleCCRush()
+	</Binding>
+	<Binding name="JCCBREAKCASTING" >
+		jCombatColorRootTable.jcc.TryBreaking = true;
+	</Binding>
+	<Binding name="JCCADDBOSS" >
+		WA_Add_Boss()
+	</Binding>
+	<Binding name="JCCTYPE" >
+		CCWA_Toggle_Tank_Type()
+	</Binding>
+	<Binding name="JCCTYPE2" >
+		CC_AR_HS()
+	</Binding>
+	<Binding name="JCCAUTOQUSAN" >
+		local D = jCombatColorRootTable.jcc;
+		D.autoqusan = not D.autoqusan;
+		if D.autoqusan then
+			jcmessage("允许自动驱散");
+		else
+			jcmessage("禁止自动驱散");
+		end
+	</Binding>
+  <Binding name="AUTOBREAK">
+		local D = jCombatColorRootTable.jcc;
+		D.CCNoAutoBreak = not D.CCNoAutoBreak;
+		if D.CCNoAutoBreak then
+			jcmessage("禁止自动打断");
+		else
+			jcmessage("允许自动打断");
+		end
+	</Binding>
+	<Binding name="JCCAUTOAURA" header="HUNTER" >
+		local H = jCombatColorRootTable.jcc.HUNTER;
+		H.AutoAura = not H.AutoAura;
+		if H.AutoAura then
+			jcmessage("允许自动切换守护");
+		else
+			jcmessage("禁止自动切换守护");
+		end
+	</Binding>
+	<Binding name="JCCMAGESHIELD" header="MAGE" >
+		local M = jCombatColorRootTable.jcc.MAGE;
+		M.AutoMageShield = not M.AutoMageShield;
+		if M.AutoMageShield then
+			jcmessage("允许自动法力护盾");
+		else
+			jcmessage("禁止自动法力护盾");
+		end
+	</Binding>
+	<Binding name="JCCROGUEBACK" header="ROGUE" >
+		local M = jCombatColorRootTable.jcc.ROGUE;
+		M.inback = not M.inback;
+		if M.inback then
+			jcmessage("后背出动");
+		else
+			jcmessage("打脸！");
+		end
+	</Binding>
+</Bindings>

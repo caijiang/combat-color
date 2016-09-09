@@ -1,0 +1,33 @@
+/script UseEquipmentSet("shield")
+/console taintLog 1
+
+DBM.BossHealth:AddBoss
+
+获取dbmmod 
+DBM:GetModByName(name)
+
+/script _imod=DBM:GetModByName(311);print(_imod)
+
+获取timer
+mod.timers
+
+
+/script	for i, v in ipairs(_imod.timers) do for _, uId in ipairs(v.startedTimers) do local elapsed, totalTime, timeLeft  if select("#", string.split("\t", uId)) > 1 then elapsed, totalTime = v:GetTime(select(2, string.split("\t", uId))) else elapsed, totalTime = v:GetTime() end	timeLeft = totalTime - elapsed	if timeLeft > 0 and totalTime > 0 then	print(v.id,v.text," ",timeLeft);end end end
+
+
+function DBM:SendTimerInfo(mod, target)
+	for i, v in ipairs(mod.timers) do
+		for _, uId in ipairs(v.startedTimers) do
+			local elapsed, totalTime, timeLeft
+			if select("#", string.split("\t", uId)) > 1 then
+				elapsed, totalTime = v:GetTime(select(2, string.split("\t", uId)))
+			else
+				elapsed, totalTime = v:GetTime()
+			end
+			timeLeft = totalTime - elapsed
+			if timeLeft > 0 and totalTime > 0 then
+				SendAddonMessage("D4", ("TI\t%s\t%s\t%s\t%s"):format(mod.id, timeLeft, totalTime, uId), "WHISPER", target)
+			end
+		end
+	end
+end
